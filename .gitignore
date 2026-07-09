@@ -142,3 +142,6 @@ cython_debug/
 
 _skbuild/
 .pyodide-xbuildenv/
+
+# Local Eclipse Paho MQTT C++ clone (system dependency; see README)
+paho.mqtt.cpp/

@@ -4,14 +4,14 @@ build-backend = "scikit_build_core.build"
 
 
 [project]
-name = "vda5050-python"
+name = "vda5050"
 version = "0.0.1"
 license = "MIT"
 license-files = ["LICENSE"]
 description="A minimal example package (with pybind11)"
 readme = "README.md"
 authors = [
-  { name = "My Name", email = "me@email.com" },
+  { name = "Game TL", email = "tinapatgl@a-star.edu.sg" },
 ]
 requires-python = ">=3.9"
 classifiers = [
