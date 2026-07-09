@@ -135,7 +135,7 @@ public:
 
   void start_state_thread();
 
-  void set_connection_will();
+  //TODO void set_connection_will();
 
   void publish_connection_online();
 
