@@ -27,7 +27,7 @@
 #include "vda5050_core/types/instant_actions.hpp"
 #include "vda5050_core/types/order.hpp"
 
-#include "adapter_impl.hpp"
+#include "vda5050_core/client/adapter/adapter_impl.hpp"
 #include "vda5050_core/client/adapter/adapter.hpp"
 
 namespace vda5050_core {
@@ -40,7 +40,7 @@ namespace adapter {
 void Adapter::Implementation::subscribe_orders()
 {
   protocol_adapter->subscribe<types::Order>(
-    [this](types::Order order, auto error) {
+    [this](types::Order order, std::optional<types::Error> error) {
       if (error.has_value())
       {
         state_manager->add_error(error.value());
@@ -52,7 +52,7 @@ void Adapter::Implementation::subscribe_orders()
 
       if (!active->order.has_value())
       {
-        auto result = validation::is_valid_graph(order);
+        auto result = order_utils::is_valid_graph(order);
 
         if (!result)
         {
@@ -93,7 +93,7 @@ void Adapter::Implementation::subscribe_orders()
         return;
       }
 
-      auto result = validation::is_valid_update(active->order->order, order);
+      auto result = order_utils::is_valid_update(active->order->order, order);
 
       if (!result)
       {
