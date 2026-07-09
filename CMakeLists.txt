@@ -1,3 +1,4 @@
+# This CMake is to define the Python Wheel Build. Build the PyBind extension module, decide which subprojects to pull in, built it and pull into the python package
 # Require CMake 3.15+ (matching scikit-build-core) Use new versions of all
 # policies up to CMake 4.0
 cmake_minimum_required(VERSION 3.15...4.0)
@@ -9,17 +10,19 @@ project(
   VERSION ${SKBUILD_PROJECT_VERSION}
   LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Find pybind11 and Python
 find_package(pybind11 CONFIG REQUIRED)
+add_subdirectory(src/vda5050/vda5050_core)
 
 # Add a library using FindPython's tooling (pybind11 also provides a helper like
 # this)
-python_add_library(_core MODULE src/main.cpp WITH_SOABI)
+python_add_library(_core MODULE src/vda5050/_core.cpp WITH_SOABI)
 target_link_libraries(_core PRIVATE pybind11::headers)
 
 # This is passing in the version as a define just as an example
 target_compile_definitions(_core PRIVATE VERSION_INFO=${PROJECT_VERSION})
 
 # The install directory is the output (wheel) directory
-install(TARGETS _core DESTINATION vda5050-python)
-
+install(TARGETS _core DESTINATION vda5050)

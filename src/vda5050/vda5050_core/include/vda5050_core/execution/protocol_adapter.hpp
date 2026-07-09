@@ -19,7 +19,7 @@
 #ifndef VDA5050_CORE__EXECUTION__PROTOCOL_ADAPTER_HPP_
 #define VDA5050_CORE__EXECUTION__PROTOCOL_ADAPTER_HPP_
 
-#include <fmt/core.h>
+#include <fmt/format.h> // changed from core.h
 
 #include <atomic>
 #include <chrono>

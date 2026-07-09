@@ -9,7 +9,12 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-find_package(ament_cmake REQUIRED)
+# Altered from vda5050_core upstream for uv packaging
+option(VDA5050_CORE_ENABLE_AMENT "Enable ROS2 ament packaging" OFF)
+if (VDA5050_CORE_ENABLE_AMENT)
+  find_package(ament_cmake REQUIRED)
+endif()
+
 find_package(PahoMqttCpp REQUIRED)
 find_package(fmt REQUIRED)
 find_package(nlohmann_json REQUIRED)
@@ -237,18 +242,18 @@ install(
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin
 )
-
-ament_export_targets(export_${PROJECT_NAME}
-  HAS_LIBRARY_TARGET
-  NAMESPACE ${PROJECT_NAME}::
-)
-ament_export_dependencies(PahoMqttCpp fmt nlohmann_json)
-
-if(ENABLE_ROS2)
-  ament_export_dependencies(vda5050_interfaces)
+if (VDA5050_CORE_ENABLE_AMENT)
+  ament_export_targets(export_${PROJECT_NAME}
+    HAS_LIBRARY_TARGET
+    NAMESPACE ${PROJECT_NAME}::
+  )
+  ament_export_dependencies(PahoMqttCpp fmt nlohmann_json)
+  if(ENABLE_ROS2)
+    ament_export_dependencies(vda5050_interfaces)
+  endif()
 endif()
 
-option(BUILD_EXAMPLES "Build examples" ON)
+option(BUILD_EXAMPLES "Build examples" OFF) # ON -> OFF, no ROS2
 
 if(BUILD_EXAMPLES)
   add_executable(custom_base examples/custom_base.cpp)
@@ -286,7 +291,7 @@ endif()
 
 option(BUILD_TESTING "Build tests" ON)
 
-if(BUILD_TESTING)
+if(BUILD_TESTING AND VDA5050_CORE_ENABLE_AMENT)
   include(cmake/vda5050_ament_lint_common.cmake)
   vda5050_ament_lint_common()
 
@@ -415,13 +420,15 @@ if(BUILD_TESTING)
   target_link_libraries(test_master_actions vda5050_core::master)
 endif()
 
-# Install linter macro
-install(
-  FILES
-    cmake/vda5050_ament_lint_common.cmake
-  DESTINATION share/${PROJECT_NAME}/cmake
-)
+if(VDA5050_CORE_ENABLE_AMENT)
+  # Install linter macro
+  install(
+    FILES
+      cmake/vda5050_ament_lint_common.cmake
+    DESTINATION share/${PROJECT_NAME}/cmake
+  )
 
-ament_package(
-  CONFIG_EXTRAS "vda5050_core-extras.cmake"
-)
+  ament_package(
+    CONFIG_EXTRAS "vda5050_core-extras.cmake"
+  )
+endif()
