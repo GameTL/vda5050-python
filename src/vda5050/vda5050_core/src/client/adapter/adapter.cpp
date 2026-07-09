@@ -176,12 +176,12 @@ void Adapter::Implementation::start_state_thread()
 }
 
 //=============================================================================
-void Adapter::Implementation::set_connection_will()
-{
-  types::Connection connection_will;
-  connection_will.connection_state = types::ConnectionState::CONNECTIONBROKEN;
-  protocol_adapter->set_will<types::Connection>(connection_will, 1, true);
-}
+// void Adapter::Implementation::set_connection_will()
+// {
+//   types::Connection connection_will;
+//   connection_will.connection_state = types::ConnectionState::CONNECTIONBROKEN;
+//   protocol_adapter->set_will<types::Connection>(connection_will, 1, true);
+// }
 
 //=============================================================================
 void Adapter::Implementation::publish_connection_online()
@@ -555,8 +555,7 @@ void Adapter::start()
   {
     factsheet_manager->factsheet = pimpl_->make_default_factsheet();
   }
-
-  pimpl_->set_connection_will();
+  //TODO pimpl_->set_connection_will();
   pimpl_->protocol_adapter->connect();
 
   if (!pimpl_->protocol_adapter->connected())
