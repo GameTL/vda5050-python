@@ -37,6 +37,7 @@ inline const std::string ActionBlockedByDrivingError =
   "actionBlockedByDrivingError";
 inline const std::string HardActionBlockedError = "hardActionBlockedError";
 inline const std::string ModeValidationError = "modeValidationError";
+inline const std::string NavigationFailedError = "navigationFailedError";
 
 // Reference key string for vda5050_types::ErrorReference::key
 inline const std::string RefOrderId = "orderId";
