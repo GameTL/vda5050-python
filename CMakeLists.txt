@@ -18,11 +18,26 @@ add_subdirectory(src/vda5050/vda5050_core)
 
 # Add a library using FindPython's tooling (pybind11 also provides a helper like
 # this)
-python_add_library(_core MODULE src/vda5050/_core.cpp WITH_SOABI)
-target_link_libraries(_core PRIVATE pybind11::headers)
+pybind11_add_module(_core 
+src/vda5050/_core.cpp
+src/vda5050/vda5050_core/python/src/rmf_migration.cpp # dependancy of _core.cpp
+)
+
+target_link_libraries(_core PRIVATE 
+pybind11::headers
+vda5050_core::client
+vda5050_core::execution
+vda5050_core::transport
+vda5050_core::types
+)
+target_include_directories(_core PRIVATE src/vda5050/vda5050_core/python/include
+)
 
 # This is passing in the version as a define just as an example
 target_compile_definitions(_core PRIVATE VERSION_INFO=${PROJECT_VERSION})
 
 # The install directory is the output (wheel) directory
 install(TARGETS _core DESTINATION vda5050)
+
+# add_subdirectory(src/vda5050)
+# target_link_libraries(_core PRIVATE vda5050_core::)
