@@ -38,6 +38,9 @@
 
 #include "rmf_migration.hpp"
 
+#define STRINGIFY(x) #x
+#define MACRO_STRINGIFY(x) STRINGIFY(x)
+
 namespace py = pybind11;
 
 using vda5050_core::python::rmf_migration::ActionExecutor;
@@ -74,6 +77,11 @@ using vda5050_core::types::Velocity;
 PYBIND11_MODULE(_core, m)
 {
   m.doc() = "VDA5050 Core Python bindings";
+#ifdef VERSION_INFO
+  m.attr("__version__") = MACRO_STRINGIFY(VERSION_INFO);
+#else
+  m.attr("__version__") = "dev";
+#endif
 
   auto m_client = m.def_submodule("client", "Native VDA5050 client API");
 
