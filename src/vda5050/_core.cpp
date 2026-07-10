@@ -20,11 +20,11 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-// #include "vda5050_core/client/adapter/state_manager.hpp"
+#include "vda5050_core/client/adapter/state_manager.hpp"
 #include "vda5050_core/types/action_state.hpp"
 #include "vda5050_core/types/action_status.hpp"
 #include "vda5050_core/types/agv_position.hpp"
-#include "vda5050_core/types/battery_state.hpp"
+#include "vda5050_core/types/battery_state.hpp" 
 #include "vda5050_core/types/e_stop.hpp"
 #include "vda5050_core/types/error.hpp"
 #include "vda5050_core/types/error_level.hpp"
@@ -196,6 +196,7 @@ PYBIND11_MODULE(_core, m)
 
   py::class_<StateManager, std::shared_ptr<StateManager>>(
     m_client, "StateManager")
+    //TODO .def_static("make", &StateManager::make) // need to construct a standalone `StateManager` 
     .def("set_position", &StateManager::set_position)
     .def("set_velocity", &StateManager::set_velocity)
     .def("set_driving", &StateManager::set_driving)

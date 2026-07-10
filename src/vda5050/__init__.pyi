@@ -1,19 +1,20 @@
+"""VDA5050 Python bindings.
+
+Top-level package re-exporting the native client and Open-RMF migration
+APIs.
+
+Attributes
+----------
+__doc__ : str
+    Module documentation string from the native extension.
+__version__ : str
+    Package version string.
 """
-Pybind11 example plugin
------------------------
 
-.. currentmodule:: vda5050-python
+from __future__ import annotations
 
-.. autosummary::
-    :toctree: _generate
+from ._client import *
+from ._rmf_migration import *
 
-    add
-    subtract
-"""
-
-def add(i: int, j: int) -> int:
-    """
-    Add two numbers
-
-    Some other explanation about the add function.
-    """
+__doc__: str
+__version__: str
