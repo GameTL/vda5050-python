@@ -25,6 +25,9 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Private :: Do Not Upload",
 ]
+dependencies = [
+    "rich>=15.0.0",
+]
 
 
 [dependency-groups]
