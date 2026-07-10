@@ -39,5 +39,21 @@ target_compile_definitions(_core PRIVATE VERSION_INFO=${PROJECT_VERSION})
 # The install directory is the output (wheel) directory
 install(TARGETS _core DESTINATION vda5050)
 
+install(TARGETS 
+vda5050_client
+vda5050_execution
+vda5050_transport 
+vda5050_order_utils 
+vda5050_logger
+LIBRARY DESTINATION vda5050
+RUNTIME DESTINATION vda5050
+)
+
+
+set_target_properties(_core PROPERTIES
+  BUILD_WITH_INSTALL_RPATH ON
+  INSTALL_RPATH "@loader_path"
+)
+
 # add_subdirectory(src/vda5050)
 # target_link_libraries(_core PRIVATE vda5050_core::)
