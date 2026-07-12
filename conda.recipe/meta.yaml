@@ -1,5 +1,5 @@
 package:
-  name: vda5050-python
+  name: vda5050
   version: 0.0.1
 
 source:
@@ -26,11 +26,12 @@ requirements:
 
   run:
     - python
+    - rich
 
 
 test:
   imports:
-    - vda5050-python
+    - vda5050
   requires:
     - pytest
   source_files:
@@ -39,5 +40,5 @@ test:
     - pytest tests
 
 about:
-  summary: An example project built with pybind11 and scikit-build.
+  summary: VDA5050 Python bindings built with pybind11 and scikit-build-core.
   license_file: LICENSE

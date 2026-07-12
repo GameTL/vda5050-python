@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
+      - main
   pull_request:
 
 jobs:
@@ -30,15 +30,21 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           channels: conda-forge
+          activate-environment: build
+
+      - name: Install native dependencies
+        run: bash .github/scripts/install-native-deps.sh
 
       - name: Prepare
-        run: conda install conda-build conda-verify pytest
+        run: conda install -y conda-build conda-verify pytest
 
       - name: Build
-        run: conda build conda.recipe
+        env:
+          CMAKE_PREFIX_PATH: /usr/local
+        run: conda-build conda.recipe
 
       - name: Install
-        run: conda install -c ${CONDA_PREFIX}/conda-bld/ vda5050-python
+        run: conda install -y -c local vda5050
 
       - name: Test
         run: pytest tests

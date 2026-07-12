@@ -17,10 +17,10 @@ An example project built with [pybind11](https://pybind11.readthedocs.io) and [s
 - Clone this repository
 - `pip install ./vda5050-python`
 
-
-
 Local Install 
+
 # Prequiste
+
 ```bash
 # MacOS
 # compile and install paho mqtt 
@@ -34,38 +34,48 @@ sudo cmake --build build/ --target install
 # 
 brew install fmt nlohmann-json
 ```
+
 ```bash
 uv venv --python /opt/homebrew/bin/python3.13 # use your system python as base. A `libfmt.12.2.0.dylib` will error an arm64 & x86 mismatch MacOS
 cd vda5050-python; 
 export CMAKE_PREFIX_PATH="/opt/homebrew${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
-uv pip install .
-
 ```
 
-Test call
-```python
-import vda5050-python
 
-vda5050-python.add(1, 2)
-```
 
-# Bindings 
+## Start Simple Master and Adapter
+
+See [examples/mqtt_pair/README.md](examples/mqtt_pair/README.md) for more usage examples and details.
+
+# Bindings
+
 - since the template `scikit_build_example`: add vda5050_core as submodules in CMakeList.txt
-- Have the __init__.py import `._core.cpp` binding , register submodules from core. 
-- Occupy __init__.pyi for intelisense autocomplete + pylance + description + How-To use function, class, vars,
+- Have the **init**.py import `._core.cpp` binding , register submodules from core. 
+- Occupy **init**.pyi for intelisense autocomplete + pylance + description + How-To use function, class, vars,
 
-# Notes 
+# Notes
+
 Around fmt 11, pulling fmt::format through core.h was deprecated.
 in `logger.hpp` and `protocol_adapter.hpp` change from `#include <fmt/core.h>` to `#include <fmt/format.h>`
 
-# Uninstall 
+# Uninstall
+
 Only if you need to delete and are sure no other software depends on this. 
-```bash 
+
+```bash
 sudo rm -rf /opt/homebrew/include/mqtt \
   /opt/homebrew/lib/cmake/PahoMqttCpp \
   /opt/homebrew/lib/libpaho-mqttpp3*
 brew uninstall libpaho-mqtt
 ```
+
+# Run this package
+
+2 Option: 
+
+- uv venv and install and run `example_master_webserver.py` [TODO]
+- Run the option above in a docker compose. see `example/docker/README.md` [TODO]
+
 
 
 ## Files
