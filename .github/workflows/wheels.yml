@@ -22,7 +22,7 @@ jobs:
     name: Build SDist
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Build SDist
       run: pipx run build --sdist
@@ -45,15 +45,15 @@ jobs:
         os: [ubuntu-latest, macos-latest]
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Install native dependencies (host, for non-container builds)
       if: runner.os == 'macOS'
       run: bash .github/scripts/install-native-deps.sh
 
-    - uses: astral-sh/setup-uv@v8.1.0
+    - uses: astral-sh/setup-uv@v8.3.2
 
-    - uses: pypa/cibuildwheel@v3.4
+    - uses: pypa/cibuildwheel@v4.1
       env:
         CIBW_BEFORE_ALL_LINUX: bash {package}/.github/scripts/install-native-deps.sh
         CIBW_ENVIRONMENT_MACOS: >
