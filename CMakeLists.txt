@@ -51,23 +51,27 @@ install(TARGETS
   RUNTIME DESTINATION vda5050
   )
 
-# macOS uses @loader_path; Linux ELF uses $ORIGIN so packaged .so/.dylib siblings resolve.
 if(APPLE)
-  set(_vda5050_rpath "@loader_path")
+  set(_runtime_path "@loader_path")
 elseif(UNIX)
-  set(_vda5050_rpath "$ORIGIN")
-endif()
-if(DEFINED _vda5050_rpath)
-  set_target_properties(_core PROPERTIES
-    BUILD_WITH_INSTALL_RPATH ON
-    INSTALL_RPATH "${_vda5050_rpath}"
-    BUILD_RPATH "${_vda5050_rpath}"
-  )
-endif()
-if(APPLE)
-  set_target_properties(_core PROPERTIES MACOSX_RPATH ON)
+  set(_runtime_path "$ORIGIN")
 endif()
 
+set_target_properties(
+  _core
+  vda5050_client
+  vda5050_execution
+  vda5050_transport
+  vda5050_order_utils
+  vda5050_logger
+  vda5050_layout
+  vda5050_master
+  PROPERTIES
+  BUILD_WITH_INSTALL_RPATH ON
+  INSTALL_RPATH "${_runtime_path}"
+  BUILD_RPATH "${_runtime_path}"
+  MACOSX_RPATH ON
+)
 
 # add_subdirectory(src/vda5050)
 # target_link_libraries(_core PRIVATE vda5050_core::)
