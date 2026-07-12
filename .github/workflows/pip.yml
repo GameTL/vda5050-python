@@ -5,7 +5,7 @@ on:
   pull_request:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -14,8 +14,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest, macos-latest, ubuntu-latest]
-        python-version: ["3.9", "3.14", "pypy-3.10"]
+        platform: [macos-latest, ubuntu-latest]
+        python-version: ["3.9", "3.13", "3.14"]
 
     steps:
     - uses: actions/checkout@v6
@@ -25,7 +25,12 @@ jobs:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
 
+    - name: Install native dependencies
+      run: bash .github/scripts/install-native-deps.sh
+
     - name: Build and install
+      env:
+        CMAKE_PREFIX_PATH: ${{ runner.os == 'macOS' && '/opt/homebrew:/usr/local' || '/usr/local' }}
       run: pip install --verbose . --group test
 
     - name: Test

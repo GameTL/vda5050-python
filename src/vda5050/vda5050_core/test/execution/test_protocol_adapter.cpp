@@ -81,6 +81,7 @@ protected:
 
   std::string interface_;
   std::string version_;
+  std::string topic_version_;
   std::string manufacturer_;
   std::string serial_number_;
 
@@ -92,7 +93,8 @@ protected:
   void SetUp()
   {
     interface_ = "uagv";
-    version_ = "v2";
+    version_ = "2.0.0";
+    topic_version_ = "v2";
     manufacturer_ = "ROS-I";
     serial_number_ = "S001";
 
@@ -102,7 +104,8 @@ protected:
       mock_, interface_, version_, manufacturer_, serial_number_);
 
     topic_prefix_ = fmt::format(
-      "{}/{}/{}/{}/", interface_, version_, manufacturer_, serial_number_);
+      "{}/{}/{}/{}/", interface_, topic_version_, manufacturer_,
+      serial_number_);
 
     qos_ = 0;
     retained_ = false;

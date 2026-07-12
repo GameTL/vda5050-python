@@ -219,7 +219,8 @@ public:
 
   static std::string get_topic_version(const std::string& version)
   {
-    // TODO(sauk2): Enforce stricter version checking before parsing string
+    if (!version.empty() && version.front() == 'v') return version;
+
     auto position = version.find('.');
     std::string major = version.substr(0, position);
     return "v" + major;
