@@ -6,12 +6,6 @@ resolution-markers = [
     "python_full_version < '3.10'",
 ]
 
-[manifest]
-members = [
-    "vda5050",
-    "venv",
-]
-
 [[package]]
 name = "colorama"
 version = "0.4.6"
@@ -266,8 +260,3 @@ requires-dist = [{ name = "rich", specifier = ">=15.0.0" }]
 [package.metadata.requires-dev]
 dev = [{ name = "pytest" }]
 test = [{ name = "pytest" }]
-
-[[package]]
-name = "venv"
-version = "0.1.0"
-source = { virtual = "tests/venv" }

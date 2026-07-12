@@ -292,9 +292,7 @@ class RobotCallbacks:
     ) -> Callable[[Destination, CommandExecution], None] | None:
         """Optional localization callback."""
     @localize.setter
-    def localize(
-        self, value: Callable[[Destination, CommandExecution], None]
-    ) -> None:
+    def localize(self, value: Callable[[Destination, CommandExecution], None]) -> None:
         """Set the localization callback.
 
         Parameters
@@ -306,9 +304,7 @@ class RobotCallbacks:
 class RobotUpdateHandle:
     """Handle for pushing robot state updates into the adapter."""
 
-    def update(
-        self, state: RobotState, identifier: ActivityIdentifier
-    ) -> None:
+    def update(self, state: RobotState, identifier: ActivityIdentifier) -> None:
         """Publish an updated robot state.
 
         Parameters
@@ -425,9 +421,7 @@ class FleetConfiguration:
         config : RobotConfiguration
             Configuration to associate with ``robot_name``.
         """
-    def get_known_robot_configuration(
-        self, name: str
-    ) -> RobotConfiguration | None:
+    def get_known_robot_configuration(self, name: str) -> RobotConfiguration | None:
         """Look up a known robot configuration.
 
         Parameters
@@ -482,9 +476,7 @@ class Adapter:
         Adapter
             Fresh adapter that has not yet been started.
         """
-    def add_vda5050_fleet(
-        self, configuration: FleetConfiguration
-    ) -> FleetUpdateHandle:
+    def add_vda5050_fleet(self, configuration: FleetConfiguration) -> FleetUpdateHandle:
         """Register a VDA5050 fleet with this adapter.
 
         Parameters

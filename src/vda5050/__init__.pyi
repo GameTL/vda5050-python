@@ -1,7 +1,7 @@
 """VDA5050 Python bindings.
 
-Top-level package re-exporting the native client and Open-RMF migration
-APIs.
+Top-level package re-exporting the native client, master, and Open-RMF
+migration APIs.
 
 Attributes
 ----------
@@ -14,6 +14,7 @@ __version__ : str
 from __future__ import annotations
 
 from ._client import *
+from ._master import *
 from ._rmf_migration import *
 
 __doc__: str

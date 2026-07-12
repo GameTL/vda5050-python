@@ -528,9 +528,7 @@ class Info:
 class StateManager:
     """Mutable handle for updating published VDA5050 AGV state fields."""
 
-    def set_position(
-        self, x: float, y: float, theta: float, map_id: str
-    ) -> None:
+    def set_position(self, x: float, y: float, theta: float, map_id: str) -> None:
         """Set the AGV pose on a map.
 
         Parameters

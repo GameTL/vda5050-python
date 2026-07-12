@@ -5,7 +5,7 @@ on:
   pull_request:
   push:
     branches:
-     - master
+     - main
   release:
     types:
       - published
@@ -23,8 +23,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
-      with:
-        submodules: true
 
     - name: Build SDist
       run: pipx run build --sdist
@@ -44,16 +42,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-15-intel, macos-latest, windows-latest, ubuntu-24.04-arm, windows-11-arm]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
     - uses: actions/checkout@v6
-      with:
-        submodules: true
+
+    - name: Install native dependencies (host, for non-container builds)
+      if: runner.os == 'macOS'
+      run: bash .github/scripts/install-native-deps.sh
 
     - uses: astral-sh/setup-uv@v8.1.0
 
     - uses: pypa/cibuildwheel@v3.4
+      env:
+        CIBW_BEFORE_ALL_LINUX: bash {package}/.github/scripts/install-native-deps.sh
+        CIBW_ENVIRONMENT_MACOS: >
+          CMAKE_PREFIX_PATH=/opt/homebrew:/usr/local
+        CIBW_ENVIRONMENT_LINUX: >
+          CMAKE_PREFIX_PATH=/usr/local
+        CIBW_SKIP: "*-win* *-manylinux_i686 *musllinux*"
 
     - name: Verify clean directory
       run: git diff --exit-code
