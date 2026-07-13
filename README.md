@@ -1,5 +1,14 @@
 # vda5050-python
 
+## Notice 
+
+This repo is still pre-release
+
+based on 
+
+- `sauk2:feat/experimental-adapter` `fe13fe60ec38ef61c41fdfcf091d8b674ba19b57` 
+- `feat/master/order-lifecycle-and-actions` `c50ec598c361de77a0c5e8bb3bbdd9c80e770544`
+
 ## Installation
 
 - Clone this repository
@@ -40,6 +49,8 @@ See [examples/mqtt_pair/README.md](examples/mqtt_pair/README.md) for more usage 
 - Have the **init**.py import `._core.cpp` binding , register submodules from core. 
 - Occupy **init**.pyi for intelisense autocomplete + pylance + description + How-To use function, class, vars,
 
+
+
 # Notes
 
 Around fmt 11, pulling fmt::format through core.h was deprecated.
@@ -55,6 +66,8 @@ sudo rm -rf /opt/homebrew/include/mqtt \
   /opt/homebrew/lib/libpaho-mqttpp3*
 brew uninstall libpaho-mqtt
 ```
+
+
 
 # Run this package
 
