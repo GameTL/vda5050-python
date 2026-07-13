@@ -1,17 +1,5 @@
 # vda5050-python
 
-[Gitter](https://gitter.im/pybind/Lobby)
-
-
-| CI           | status                                                                                          |
-| ------------ | ----------------------------------------------------------------------------------------------- |
-| conda.recipe | [Conda Actions Status](https://github.com/pybind/vda5050-python/actions?query=workflow%3AConda) |
-| pip builds   | [Pip Actions Status](https://github.com/pybind/vda5050-python/actions?query=workflow%3APip)     |
-
-
-An example project built with [pybind11](https://pybind11.readthedocs.io) and [scikit-build-core](https://scikit-build-core.readthedocs.io). Python
-3.9+ (see older commits for 3.7+, or even older versions of Python using [scikit-build (classic)](https://scikit-build.readthedocs.io)).
-
 ## Installation
 
 - Clone this repository
@@ -19,7 +7,7 @@ An example project built with [pybind11](https://pybind11.readthedocs.io) and [s
 
 Local Install 
 
-# Prequiste
+## Prequiste
 
 ```bash
 # MacOS
@@ -30,8 +18,7 @@ git co v1.6.0
 git submodule update --init
 cmake -Bbuild -H. -DPAHO_WITH_MQTT_C=ON -DPAHO_BUILD_EXAMPLES=ON
 sudo cmake --build build/ --target install
-
-# 
+ 
 brew install fmt nlohmann-json
 ```
 
