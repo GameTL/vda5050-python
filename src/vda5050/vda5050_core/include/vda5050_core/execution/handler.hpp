@@ -19,10 +19,11 @@
 #ifndef VDA5050_CORE__EXECUTION__HANDLER_HPP_
 #define VDA5050_CORE__EXECUTION__HANDLER_HPP_
 
+#include <algorithm>  // std::find and std::remove_if used by Handler.
 #include <atomic>
 #include <condition_variable>
 #include <memory>
-#include <vector>
+#include <vector>  // Stores the active strategy collection.
 
 #include "vda5050_core/execution/context_interface.hpp"
 #include "vda5050_core/execution/strategy_interface.hpp"

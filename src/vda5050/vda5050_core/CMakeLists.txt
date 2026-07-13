@@ -11,6 +11,7 @@ endif()
 
 # Altered from vda5050_core upstream for uv packaging
 option(VDA5050_CORE_ENABLE_AMENT "Enable ROS2 ament packaging" OFF)
+option(VDA5050_CORE_INSTALL "Install standalone vda5050_core development files" ON)
 if (VDA5050_CORE_ENABLE_AMENT)
   find_package(ament_cmake REQUIRED)
 endif()
@@ -220,28 +221,30 @@ target_include_directories(vda5050_master
 )
 
 
-install(
-  DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
-)
+if(VDA5050_CORE_INSTALL)
+  install(
+    DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+  )
 
-install(
-  TARGETS
-    vda5050_types
-    vda5050_json_utils
-    vda5050_logger
-    vda5050_errors
-    vda5050_order_utils
-    vda5050_transport
-    vda5050_execution
-    vda5050_client
-    vda5050_layout
-    vda5050_master
-  EXPORT export_${PROJECT_NAME}
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-)
+  install(
+    TARGETS
+      vda5050_types
+      vda5050_json_utils
+      vda5050_logger
+      vda5050_errors
+      vda5050_order_utils
+      vda5050_transport
+      vda5050_execution
+      vda5050_client
+      vda5050_layout
+      vda5050_master
+    EXPORT export_${PROJECT_NAME}
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+  )
+endif()
 if (VDA5050_CORE_ENABLE_AMENT)
   ament_export_targets(export_${PROJECT_NAME}
     HAS_LIBRARY_TARGET
