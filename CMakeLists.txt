@@ -14,6 +14,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Find pybind11 and Python
 find_package(pybind11 CONFIG REQUIRED)
+set(VDA5050_CORE_INSTALL OFF CACHE BOOL
+  "Install standalone vda5050_core development files" FORCE)
 add_subdirectory(src/vda5050/vda5050_core)
 
 # Add a library using FindPython's tooling (pybind11 also provides a helper like

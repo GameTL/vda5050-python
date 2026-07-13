@@ -23,6 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
+      with:
+        submodules: true
 
     - name: Build SDist
       run: pipx run build --sdist
@@ -42,25 +44,47 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        # TODO os: [ubuntu-latest, macos-15-intel, macos-latest, windows-latest, ubuntu-24.04-arm, windows-11-]
+        include:
+          - os: ubuntu-latest
+            macos_deployment_target: ""
+          - os: macos-15-intel
+            macos_deployment_target: "15.0"
+          - os: macos-26
+            macos_deployment_target: "26.0"
 
     steps:
     - uses: actions/checkout@v6
-
-    - name: Install native dependencies (host, for non-container builds)
-      if: runner.os == 'macOS'
-      run: bash .github/scripts/install-native-deps.sh
+      with:
+        submodules: true
 
     - uses: astral-sh/setup-uv@v8.1.0
 
+    - name: Install native dependencies on macOS
+      if: runner.os == 'macOS'
+      run: bash .github/scripts/install-native-deps.sh
+      env:
+        MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macos_deployment_target }}
+
     - uses: pypa/cibuildwheel@v3.4
       env:
-        CIBW_BEFORE_ALL_LINUX: bash {package}/.github/scripts/install-native-deps.sh
-        CIBW_ENVIRONMENT_MACOS: >
-          CMAKE_PREFIX_PATH=/opt/homebrew:/usr/local
+        CIBW_BEFORE_ALL_LINUX: >
+          bash {package}/.github/scripts/install-native-deps.sh
+
         CIBW_ENVIRONMENT_LINUX: >
           CMAKE_PREFIX_PATH=/usr/local
-        CIBW_SKIP: "*-win* *-manylinux_i686 *musllinux*"
+
+        CIBW_ENVIRONMENT_MACOS: >
+          MACOSX_DEPLOYMENT_TARGET=${{ matrix.macos_deployment_target }}
+
+        CIBW_REPAIR_WHEEL_COMMAND_LINUX: >
+          LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
+          auditwheel repair -w {dest_dir} {wheel}
+
+        CIBW_REPAIR_WHEEL_COMMAND_MACOS: >
+          DYLD_LIBRARY_PATH=$REPAIR_LIBRARY_PATH
+          delocate-wheel --require-archs {delocate_archs}
+          -w {dest_dir} -v {wheel}
 
     - name: Verify clean directory
       run: git diff --exit-code

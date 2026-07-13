@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-latest]
+        platform: [ubuntu-latest, macos-26]
         python-version: ["3.9", "3.13", "3.14"]
 
     steps:
@@ -27,11 +27,17 @@ jobs:
 
     - name: Install native dependencies
       run: bash .github/scripts/install-native-deps.sh
+      env:
+        MACOSX_DEPLOYMENT_TARGET: ${{ runner.os == 'macOS' && '26.0' || '' }}
 
     - name: Build and install
       env:
-        CMAKE_PREFIX_PATH: ${{ runner.os == 'macOS' && '/opt/homebrew:/usr/local' || '/usr/local' }}
+        CMAKE_PREFIX_PATH: ${{ runner.os == 'macOS' && '/opt/homebrew' || '/usr/local' }}
+        MACOSX_DEPLOYMENT_TARGET: ${{ runner.os == 'macOS' && '26.0' || '' }}
       run: pip install --verbose . --group test
 
     - name: Test
+      env:
+        DYLD_LIBRARY_PATH: /opt/homebrew/lib:/opt/homebrew/opt/openssl@3/lib
+        LD_LIBRARY_PATH: /usr/local/lib:/usr/local/lib64
       run: pytest
