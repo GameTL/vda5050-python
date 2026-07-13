@@ -32,7 +32,7 @@ brew install fmt nlohmann-json
 ```
 
 ```bash
-uv venv --python /opt/homebrew/bin/python3.13 # use your system python as base. A `libfmt.12.2.0.dylib` will error an arm64 & x86 mismatch MacOS
+uv venv --python /opt/homebrew/bin/python3.12 # use your system python as base. A `libfmt.12.2.0.dylib` will error an arm64 & x86 mismatch MacOS
 cd vda5050-python; 
 export CMAKE_PREFIX_PATH="/opt/homebrew${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
 ```
