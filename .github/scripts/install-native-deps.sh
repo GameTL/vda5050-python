@@ -27,6 +27,11 @@ install_fmt_json_linux() {
   elif command -v yum >/dev/null 2>&1; then
     run_root yum install -y gcc-c++ cmake ninja-build pkgconfig git openssl-devel
     install_fmt_json_from_source
+  elif command -v apk >/dev/null 2>&1; then
+    # musllinux / Alpine images
+    run_root apk add --no-cache \
+      build-base cmake ninja pkgconf git openssl-dev linux-headers
+    install_fmt_json_from_source
   else
     echo "Unsupported Linux package manager" >&2
     exit 1
@@ -53,15 +58,42 @@ install_fmt_json_from_source() {
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX="$PREFIX" \
     -DJSON_BuildTests=OFF
-  cmake --install "$work/json/build"
+  run_root cmake --install "$work/json/build"
 
   rm -rf "$work"
+}
+
+# Paho is built from source with PAHO_WITH_MQTT_C=ON into PREFIX.
+# A second copy of the same dylib basename (Homebrew formula, leftover
+# /usr/local install, etc.) makes delocate fail with:
+#   Already planning to copy library with same basename as: libpaho-mqtt3as...
+ensure_single_macos_paho_prefix() {
+  local prefix="$1"
+  local other
+
+  if brew list --formula libpaho-mqtt >/dev/null 2>&1; then
+    echo "Uninstalling Homebrew libpaho-mqtt (conflicts with source Paho install)."
+    brew uninstall --ignore-dependencies libpaho-mqtt || true
+  fi
+
+  for other in /usr/local /opt/homebrew; do
+    [[ "${other}" == "${prefix}" ]] && continue
+    if compgen -G "${other}/lib/libpaho-mqtt*" >/dev/null 2>&1; then
+      echo "error: found conflicting Paho libs under ${other}/lib while PREFIX=${prefix}" >&2
+      echo "delocate cannot vendor two dylibs with the same basename." >&2
+      echo "Remove the extras, e.g.:" >&2
+      echo "  sudo rm -f ${other}/lib/libpaho-mqtt*" >&2
+      echo "  sudo rm -rf ${other}/include/mqtt ${other}/lib/cmake/PahoMqttCpp" >&2
+      exit 1
+    fi
+  done
 }
 
 install_fmt_json_macos() {
   brew install cmake ninja fmt nlohmann-json openssl@3
 
   PREFIX="${CMAKE_INSTALL_PREFIX:-$(brew --prefix)}"
+  ensure_single_macos_paho_prefix "$PREFIX"
   export CMAKE_PREFIX_PATH="$PREFIX"
   export REPAIR_LIBRARY_PATH="$PREFIX/lib:$(brew --prefix openssl@3)/lib"
 
@@ -83,6 +115,8 @@ install_paho() {
   cmake -S "$work/paho.mqtt.cpp" -B "$work/paho.mqtt.cpp/build" \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+    -DCMAKE_INSTALL_NAME_DIR="$PREFIX/lib" \
+    -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
     -DPAHO_WITH_MQTT_C=ON \
     -DPAHO_BUILD_EXAMPLES=OFF \
     -DPAHO_WITH_SSL=ON

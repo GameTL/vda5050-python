@@ -13,16 +13,11 @@ readme = "README.md"
 authors = [
   { name = "Game TL", email = "tinapatgl@a-star.edu.sg" },
 ]
-requires-python = ">=3.9"
+requires-python = "==3.12.*"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: 3.13",
-  "Programming Language :: Python :: 3.14",
   "Private :: Do Not Upload",
 ]
 dependencies = [
@@ -53,7 +48,8 @@ testpaths = ["tests"]
 
 [tool.cibuildwheel]
 build-frontend = "build[uv]"
-enable = ["pypy"]
+# Single Python ABI only (no multi-version / PyPy / free-threaded wheels).
+build = "cp312-*"
 test-command = "python -m pytest tests"
 test-sources = ["pyproject.toml", "tests"]
 test-groups = ["test"]
@@ -105,4 +101,5 @@ isort.required-imports = ["from __future__ import annotations"]
 [tool.uv.workspace]
 members = [
     "tests/venv",
+    "examples/docker/app",
 ]
