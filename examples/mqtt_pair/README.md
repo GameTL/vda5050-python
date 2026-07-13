@@ -17,15 +17,13 @@ or TLS configuration, so this example expects an anonymous local broker.
 
 ## Run
 
-Start the master first:
-
+Start Mqtt broker:
 ```bash
 # Terminal 1
 mosquitto -v
 ```
 
 Start the master first:
-
 ```bash
 # Terminal 2
 uv run examples/mqtt_pair/master.py
