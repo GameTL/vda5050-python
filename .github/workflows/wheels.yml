@@ -5,10 +5,8 @@ on:
   pull_request:
   push:
     branches:
-     - main
-  release:
-    types:
-      - published
+      - dev
+      - main
 
 env:
   FORCE_COLOR: 3
@@ -20,7 +18,7 @@ concurrency:
 jobs:
   build_sdist:
     name: Build SDist
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v6
       with:
@@ -44,9 +42,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # TODO os: [ubuntu-latest, macos-15-intel, macos-latest, windows-latest, ubuntu-24.04-arm, windows-11-]
+        # TODO os: [ubuntu-24.04, macos-15-intel, macos-latest, windows-latest, ubuntu-24.04-arm, windows-11-]
+        # Pin ubuntu-24.04 (glibc) so Linux wheels match examples/docker (FROM ubuntu:24.04).
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             macos_deployment_target: ""
           - os: macos-26-intel
             macos_deployment_target: "26.0"
@@ -94,32 +93,3 @@ jobs:
       with:
         name: cibw-wheels-${{ matrix.os }}
         path: wheelhouse/*.whl
-
-
-  upload_all:
-    name: Upload if release
-    needs: [build_wheels, build_sdist]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'release' && github.event.action == 'published'
-    environment: pypi
-    permissions:
-      id-token: write
-      attestations: write
-
-    steps:
-    - uses: actions/setup-python@v6
-      with:
-        python-version: "3.12"
-
-    - uses: actions/download-artifact@v8
-      with:
-        pattern: cibw-*
-        merge-multiple: true
-        path: dist
-
-    - name: Generate artifact attestation for sdist and wheels
-      uses: actions/attest-build-provenance@v4
-      with:
-        subject-path: "dist/*"
-
-    - uses: pypa/gh-action-pypi-publish@release/v1
