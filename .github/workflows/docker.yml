@@ -1,26 +1,34 @@
 name: Docker
 
-# Build the VDA5050 master example image on PRs and pushes.
-# Publishing to GHCR is intentionally disabled (build-only CI).
+# Build the master image on pull requests, and build and push it to the
+# GitHub Container Registry on the default branch and tags.
 on:
-  workflow_dispatch:
   pull_request:
   push:
     branches:
-      - dev
       - main
+    tags:
+      - '**'
 
 jobs:
   docker:
-    name: Build master image
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v6
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Log in to the Container registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata
         id: meta
@@ -30,15 +38,14 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=tag
-            type=ref,event=pr
 
-      - name: Build
+      - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: examples/docker
           file: examples/docker/vda5050-master.Dockerfile
           pull: true
-          push: false
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=master
