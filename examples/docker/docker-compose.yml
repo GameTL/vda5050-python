@@ -1,0 +1,31 @@
+name: vda5050-master-stack
+
+services:
+  mqtt-broker:
+    image: eclipse-mosquitto:2
+    ports:
+      - "${MQTT_PORT:-1883}:${MQTT_PORT:-1883}"
+    networks:
+      - mqtt-network
+    # healthcheck:
+    #   test: ["CMD-SHELL", "mosquitto_pub -p ${MQTT_PORT:-1883} -t healthcheck -m ping || exit 1"]
+    #   interval: 5s
+    #   timeout: 5s
+    #   retries: 3
+    #   start_period: 5s
+  
+  vda5050:
+    build:
+      context: .
+      dockerfile: vda5050-master.Dockerfile
+    image: ubuntu:24.04
+    platform: linux/amd64
+    networks:
+      - mqtt-network
+    environment:
+      MQTT_BROKER: "tcp://mqtt-broker:1883"
+
+networks:
+  mqtt-network:
+    driver: bridge
+    name: mqtt-network

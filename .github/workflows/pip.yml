@@ -5,6 +5,7 @@ on:
   pull_request:
   push:
     branches:
+      - dev
       - main
 
 jobs:
@@ -14,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-latest, macos-26]
+        platform: [ubuntu-24.04, macos-26]
         python-version: ["3.12"]
 
     steps:
