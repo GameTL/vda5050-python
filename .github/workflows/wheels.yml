@@ -20,7 +20,7 @@ jobs:
     name: Build SDist
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         submodules: true
 
@@ -53,11 +53,11 @@ jobs:
             macos_deployment_target: "26.0"
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         submodules: true
 
-    - uses: astral-sh/setup-uv@v8.1.0
+    - uses: astral-sh/setup-uv@v8.3.2
 
     - name: Install native dependencies on macOS
       if: runner.os == 'macOS'
@@ -65,7 +65,7 @@ jobs:
       env:
         MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macos_deployment_target }}
 
-    - uses: pypa/cibuildwheel@v3.4
+    - uses: pypa/cibuildwheel@v4.1
       env:
         CIBW_BEFORE_ALL_LINUX: >
           bash {package}/.github/scripts/install-native-deps.sh
