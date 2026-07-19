@@ -1,17 +1,19 @@
 name: Docker
 
 # Build the master image on pull requests, and build and push it to the
-# GitHub Container Registry on the default branch and tags.
+# GitHub Container Registry on main/dev and tags.
 on:
   pull_request:
   push:
     branches:
       - main
+      - dev
     tags:
       - '**'
 
 jobs:
   docker:
+    name: Build master image
     runs-on: ubuntu-latest
     permissions:
       contents: read
