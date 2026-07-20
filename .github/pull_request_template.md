@@ -8,7 +8,13 @@
 - [ ] Wheels CI green
 - [ ] Docker CI green (if Docker/example paths changed)
 
+### Branch name
+
+- Use `<type>/<description>` (lowercase), e.g. `feat/docker-ghcr`, `fix/mqtt-timeout`, `ci/wheels`.
+- Allowed types (same as commitlint): `feat` `fix` `docs` `style` `refactor` `perf` `test` `build` `ci` `chore` `revert`.
+
 ### Labels
 
-- Add **one** of `release:patch` | `release:minor` | `release:major` on feature PRs into `dev` to influence the next release bump (default is patch).
-- Release PRs (`dev` → `main`) are opened via the **Release PR** workflow and must carry a `release:*` label so merge tags a new `vX.Y.Z`.
+- Add **`ready-to-merge`** when CI is green to enable auto-merge (squash + delete branch).
+- Add **one** of `release:patch` | `release:minor` | `release:major` to influence the next release bump (default is patch).
+- Release PRs are opened via the **Release PR** workflow and must carry a `release:*` label so merge tags a new `vX.Y.Z` and publishes GHCR `:latest` / `:vX.Y.Z`.
