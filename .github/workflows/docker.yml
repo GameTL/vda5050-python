@@ -1,14 +1,23 @@
 name: Docker
 
-# Build the VDA5050 master and adapter example images on PRs and pushes.
-# Push images to GHCR on main/dev (and workflow_dispatch); PRs are build-only.
+# Build the VDA5050 master and adapter example images on PRs and main.
+# Push to GHCR on main / tags / workflow_dispatch / release workflow_call.
+# PRs are build-only. No :dev image.
 on:
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      version:
+        description: 'Semver tag to publish (e.g. v0.0.2). Empty = branch/PR tags only.'
+        type: string
+        required: false
+        default: ''
   pull_request:
   push:
     branches:
-      - dev
       - main
+    tags:
+      - 'v*.*.*'
 
 jobs:
   docker:
@@ -50,6 +59,8 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=ref,event=pr
+            type=raw,value=latest,enable=${{ (github.event_name == 'workflow_call' && inputs.version != '') || startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=${{ inputs.version || 'none' }},enable=${{ github.event_name == 'workflow_call' && inputs.version != '' }}
 
       - name: Build and push
         uses: docker/build-push-action@v6

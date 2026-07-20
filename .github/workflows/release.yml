@@ -16,6 +16,7 @@ permissions:
   contents: write
   pull-requests: read
   issues: write
+  packages: write
 
 jobs:
   tag-and-release:
@@ -108,11 +109,20 @@ jobs:
           if [ -z "$notes" ]; then
             notes="- Release ${NEXT}"
           fi
-          # Notes only — no wheel/docker assets (build-only CI policy).
+          # Notes only — Docker images are published by the docker job below.
           gh release create "$NEXT" \
             --title "$NEXT" \
             --target main \
             --notes "$notes"
+
+  docker:
+    name: Publish versioned Docker images
+    needs: tag-and-release
+    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && (contains(github.event.pull_request.labels.*.name, 'release:patch') || contains(github.event.pull_request.labels.*.name, 'release:minor') || contains(github.event.pull_request.labels.*.name, 'release:major')))
+    uses: ./.github/workflows/docker.yml
+    with:
+      version: ${{ needs.tag-and-release.outputs.next }}
+    secrets: inherit
 
   close-issues:
     name: Close issues referenced by the release PR

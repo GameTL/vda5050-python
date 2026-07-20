@@ -172,7 +172,7 @@ jobs:
           ${CHANGES}
           ${closes_section}
           ---
-          Merging this PR will trigger tagging and a GitHub Release (notes only; no wheel/docker publish yet).
+          Merging this PR will trigger tagging, a GitHub Release, and GHCR images tagged \`:latest\` and \`${NEXT}\`.
           EOF
           )
 
