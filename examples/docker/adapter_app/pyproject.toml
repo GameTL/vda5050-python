@@ -1,0 +1,15 @@
+[project]
+name = "adapter_app"
+version = "0.1.0"
+description = "VDA5050 robot adapter example for Docker"
+requires-python = "==3.12.*"
+dependencies = [
+    "vda5050 @ https://github.com/GameTL/vda5050-python/releases/download/v0.0.1-alpha/vda5050-0.0.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl ; sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "vda5050 @ https://github.com/GameTL/vda5050-python/releases/download/v0.0.1-alpha/vda5050-0.0.1-cp312-cp312-macosx_26_0_arm64.whl ; sys_platform == 'darwin' and platform_machine == 'arm64'",
+]
+
+[tool.uv]
+environments = [
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "sys_platform == 'darwin' and platform_machine == 'arm64'",
+]

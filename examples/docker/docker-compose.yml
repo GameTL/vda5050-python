@@ -1,4 +1,4 @@
-name: vda5050-master-stack
+name: vda5050-mqtt-pair
 
 services:
   mqtt-broker:
@@ -7,23 +7,39 @@ services:
       - "${MQTT_PORT:-1883}:${MQTT_PORT:-1883}"
     networks:
       - mqtt-network
-    # healthcheck:
-    #   test: ["CMD-SHELL", "mosquitto_pub -p ${MQTT_PORT:-1883} -t healthcheck -m ping || exit 1"]
-    #   interval: 5s
-    #   timeout: 5s
-    #   retries: 3
-    #   start_period: 5s
-  
-  vda5050:
+
+  master:
     build:
       context: .
       dockerfile: vda5050-master.Dockerfile
-    image: ubuntu:24.04
+    image: ghcr.io/gametl/vda5050-python/master:local
     platform: linux/amd64
     networks:
       - mqtt-network
     environment:
       MQTT_BROKER: "tcp://mqtt-broker:1883"
+      VDA5050_MANUFACTURER: "${VDA5050_MANUFACTURER:-ACME}"
+      VDA5050_SERIAL_NUMBER: "${VDA5050_SERIAL_NUMBER:-AGV-001}"
+      MASTER_MQTT_CLIENT_ID: "${MASTER_MQTT_CLIENT_ID:-example-master}"
+    depends_on:
+      - mqtt-broker
+
+  adapter:
+    build:
+      context: .
+      dockerfile: vda5050-adapter.Dockerfile
+    image: ghcr.io/gametl/vda5050-python/adapter:local
+    platform: linux/amd64
+    networks:
+      - mqtt-network
+    environment:
+      MQTT_BROKER: "tcp://mqtt-broker:1883"
+      VDA5050_MANUFACTURER: "${VDA5050_MANUFACTURER:-ACME}"
+      VDA5050_SERIAL_NUMBER: "${VDA5050_SERIAL_NUMBER:-AGV-001}"
+      ROBOT_MQTT_CLIENT_ID: "${ROBOT_MQTT_CLIENT_ID:-example-robot-adapter-acme-agv-001}"
+    depends_on:
+      - mqtt-broker
+      - master
 
 networks:
   mqtt-network:
