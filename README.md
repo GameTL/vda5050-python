@@ -20,7 +20,7 @@ Run the current mqtt_pair set: a Mosquitto broker, `/master`, and `/adapter`
 # Terminal 1 — MQTT broker
 mosquitto -v -p 1883
 
-# Terminal 2 — master only (:latest, or pin :vX.Y.Z / :main)
+# Terminal 2 — master only (:latest, or pin :X.Y.Z / :main)
 docker run --platform linux/amd64 \
   -e MQTT_BROKER=tcp://host.docker.internal:1883 \
   ghcr.io/gametl/vda5050-python/master:latest
@@ -49,8 +49,8 @@ docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/master:latest
 docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/adapter:latest
 
 # Pin to a release from the changelog / GitHub Releases
-docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/master:v0.0.2
-docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/adapter:v0.0.2
+docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/master:0.0.2
+docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/adapter:0.0.2
 
 # Rolling tip of main (between releases)
 docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/master:main

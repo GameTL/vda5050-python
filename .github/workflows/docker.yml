@@ -8,7 +8,7 @@ on:
   workflow_call:
     inputs:
       version:
-        description: 'Semver tag to publish (e.g. v0.0.2). Empty = branch/PR tags only.'
+        description: 'Git semver tag (e.g. v0.0.2); image tag strips the leading v → :0.0.2'
         type: string
         required: false
         default: ''
@@ -50,6 +50,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Image tags use bare semver (0.0.2), not git-style v0.0.2.
+      - name: Normalize image version
+        id: image_version
+        env:
+          RAW: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if [ -n "${RAW:-}" ]; then
+            echo "tag=${RAW#v}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -57,10 +70,10 @@ jobs:
           images: ghcr.io/${{ github.repository }}/${{ matrix.image }}
           tags: |
             type=ref,event=branch
-            type=ref,event=tag
+            type=semver,pattern={{version}}
             type=ref,event=pr
             type=raw,value=latest,enable=${{ (github.event_name == 'workflow_call' && inputs.version != '') || startsWith(github.ref, 'refs/tags/v') }}
-            type=raw,value=${{ inputs.version || 'none' }},enable=${{ github.event_name == 'workflow_call' && inputs.version != '' }}
+            type=raw,value=${{ steps.image_version.outputs.tag || 'none' }},enable=${{ github.event_name == 'workflow_call' && inputs.version != '' }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
