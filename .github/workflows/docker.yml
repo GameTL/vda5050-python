@@ -1,14 +1,23 @@
 name: Docker
 
-# Build the VDA5050 master and adapter example images on PRs and pushes.
-# Publishing to GHCR is intentionally disabled (build-only CI).
+# Build the VDA5050 master and adapter example images on PRs and main.
+# Push to GHCR on main / tags / workflow_dispatch / release workflow_call.
+# PRs are build-only. No :dev image.
 on:
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      version:
+        description: 'Semver tag to publish (e.g. v0.0.2). Empty = branch/PR tags only.'
+        type: string
+        required: false
+        default: ''
   pull_request:
   push:
     branches:
-      - dev
       - main
+    tags:
+      - 'v*.*.*'
 
 jobs:
   docker:
@@ -16,6 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -32,6 +42,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -41,14 +59,16 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=ref,event=pr
+            type=raw,value=latest,enable=${{ (github.event_name == 'workflow_call' && inputs.version != '') || startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=${{ inputs.version || 'none' }},enable=${{ github.event_name == 'workflow_call' && inputs.version != '' }}
 
-      - name: Build
+      - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: examples/docker
           file: ${{ matrix.dockerfile }}
           pull: true
-          push: false
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ matrix.cache_scope }}
