@@ -10,21 +10,42 @@ based on
 - `feat/master/order-lifecycle-and-actions` `c50ec598c361de77a0c5e8bb3bbdd9c80e770544`
 
 ## Quick Run
-### Docker Image with Mosquitto
+
+Run the current mqtt_pair set: a Mosquitto broker, `/master`, and `/adapter`
+(same identity: `ACME` / `AGV-001`).
+
+### Docker images with Mosquitto
+
 ```bash
-# Terminal 1
+# Terminal 1 — MQTT broker
 mosquitto -v -p 1883
 
-# Terminal 2
+# Terminal 2 — master only
 docker run --platform linux/amd64 \
   -e MQTT_BROKER=tcp://host.docker.internal:1883 \
-  ghcr.io/gametl/vda5050-python:main
+  ghcr.io/gametl/vda5050-python/master:main
+
+# Terminal 3 — adapter (pairs with /master)
+docker run --platform linux/amd64 \
+  -e MQTT_BROKER=tcp://host.docker.internal:1883 \
+  ghcr.io/gametl/vda5050-python/adapter:main
 ```
 
-### Docker Image
+On Linux, use `tcp://172.17.0.1:1883` (or your host IP) instead of
+`host.docker.internal` if that hostname is unavailable.
+
+### Compose (broker + master + adapter)
+
 ```bash
-# For latest released image
-docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python:main
+cd examples/docker
+docker compose up --build
+```
+
+### Pull images
+
+```bash
+docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/master:main
+docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/adapter:main
 ```
 
 ### Install as Python Package 

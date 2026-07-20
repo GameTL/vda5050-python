@@ -1,6 +1,6 @@
 name: Docker
 
-# Build the VDA5050 master example image on PRs and pushes.
+# Build the VDA5050 master and adapter example images on PRs and pushes.
 # Publishing to GHCR is intentionally disabled (build-only CI).
 on:
   workflow_dispatch:
@@ -12,10 +12,20 @@ on:
 
 jobs:
   docker:
-    name: Build master image
+    name: Build ${{ matrix.image }} image
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: master
+            dockerfile: examples/docker/vda5050-master.Dockerfile
+            cache_scope: master
+          - image: adapter
+            dockerfile: examples/docker/vda5050-adapter.Dockerfile
+            cache_scope: adapter
     steps:
       - uses: actions/checkout@v6
 
@@ -26,7 +36,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository }}/master
+          images: ghcr.io/${{ github.repository }}/${{ matrix.image }}
           tags: |
             type=ref,event=branch
             type=ref,event=tag
@@ -36,10 +46,10 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: examples/docker
-          file: examples/docker/vda5050-master.Dockerfile
+          file: ${{ matrix.dockerfile }}
           pull: true
           push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha,scope=master
-          cache-to: type=gha,mode=max,scope=master
+          cache-from: type=gha,scope=${{ matrix.cache_scope }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.cache_scope }}
