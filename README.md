@@ -10,6 +10,17 @@ based on
 - `feat/master/order-lifecycle-and-actions` `c50ec598c361de77a0c5e8bb3bbdd9c80e770544`
 
 ## Quick Run
+### Docker Image with Mosquitto
+```bash
+# Terminal 1
+mosquitto -v -p 1883
+
+# Terminal 2
+docker run --platform linux/amd64 \
+  -e MQTT_BROKER=tcp://host.docker.internal:1883 \
+  ghcr.io/gametl/vda5050-python:main
+```
+
 ### Docker Image
 ```bash
 # For latest released image
