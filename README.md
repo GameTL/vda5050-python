@@ -20,7 +20,7 @@ Run the current mqtt_pair set: a Mosquitto broker, `/master`, and `/adapter`
 # Terminal 1 — MQTT broker
 mosquitto -v -p 1883
 
-# Terminal 2 — master only (:latest, or pin :vX.Y.Z / :main)
+# Terminal 2 — master only (:latest, or pin :X.Y.Z / :main)
 docker run --platform linux/amd64 \
   -e MQTT_BROKER=tcp://host.docker.internal:1883 \
   ghcr.io/gametl/vda5050-python/master:latest
@@ -49,8 +49,8 @@ docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/master:latest
 docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/adapter:latest
 
 # Pin to a release from the changelog / GitHub Releases
-docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/master:v0.0.2
-docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/adapter:v0.0.2
+docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/master:0.0.2
+docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/adapter:0.0.2
 
 # Rolling tip of main (between releases)
 docker pull --platform linux/amd64 ghcr.io/gametl/vda5050-python/master:main
@@ -96,6 +96,20 @@ export CMAKE_PREFIX_PATH="/opt/homebrew${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}
 ## Usage
 ###  Start Simple Master and Adapter
 See [examples/mqtt_pair/README.md](examples/mqtt_pair/README.md) for more usage examples and details.
+
+## Releasing
+
+Merging to `main` does **not** create a release. Releases are tag-driven:
+
+1. On `main`, bump `version` in `pyproject.toml`.
+2. Push an annotated tag:
+
+```bash
+git tag -a v0.0.2 -m "Release v0.0.2"
+git push origin v0.0.2
+```
+
+That tag push publishes GHCR `:latest` / `:X.Y.Z`, builds wheels, and creates a GitHub Release with the wheel/sdist assets. Rolling `:main` images still publish on every push to `main`.
 
 ## Bindings
 This repo python packaging is based in scikit_build_example
