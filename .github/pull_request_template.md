@@ -16,5 +16,8 @@
 ### Labels
 
 - Add **`ready-to-merge`** when CI is green to enable auto-merge (squash + delete branch).
-- Add **one** of `release:patch` | `release:minor` | `release:major` to influence the next release bump (default is patch).
-- Release PRs are opened via the **Release PR** workflow and must carry a `release:*` label so merge tags a new `vX.Y.Z` and publishes GHCR `:latest` / `:X.Y.Z`.
+
+### Releasing
+
+- Merging to `main` does **not** release.
+- To release: bump `version` in `pyproject.toml` on `main`, then push an annotated tag `vX.Y.Z` — that publishes GHCR `:latest` / `:X.Y.Z` (bare semver) and attaches wheels to a GitHub Release.

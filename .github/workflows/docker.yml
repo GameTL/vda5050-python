@@ -1,17 +1,10 @@
 name: Docker
 
 # Build the VDA5050 master and adapter example images on PRs and main.
-# Push to GHCR on main / tags / workflow_dispatch / release workflow_call.
-# PRs are build-only. No :dev image.
+# Push to GHCR on main (:main rolling), tags v*.*.* (:latest + bare :X.Y.Z), and
+# workflow_dispatch. Versioned release images are tag-only. PRs are build-only.
 on:
   workflow_dispatch:
-  workflow_call:
-    inputs:
-      version:
-        description: 'Git semver tag (e.g. v0.0.2); image tag strips the leading v → :0.0.2'
-        type: string
-        required: false
-        default: ''
   pull_request:
   push:
     branches:
@@ -51,18 +44,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # Image tags use bare semver (0.0.2), not git-style v0.0.2.
-      - name: Normalize image version
-        id: image_version
-        env:
-          RAW: ${{ inputs.version }}
-        run: |
-          set -euo pipefail
-          if [ -n "${RAW:-}" ]; then
-            echo "tag=${RAW#v}" >> "$GITHUB_OUTPUT"
-          else
-            echo "tag=" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -72,8 +53,7 @@ jobs:
             type=ref,event=branch
             type=semver,pattern={{version}}
             type=ref,event=pr
-            type=raw,value=latest,enable=${{ (github.event_name == 'workflow_call' && inputs.version != '') || startsWith(github.ref, 'refs/tags/v') }}
-            type=raw,value=${{ steps.image_version.outputs.tag || 'none' }},enable=${{ github.event_name == 'workflow_call' && inputs.version != '' }}
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
 
       - name: Build and push
         uses: docker/build-push-action@v6

@@ -97,6 +97,20 @@ export CMAKE_PREFIX_PATH="/opt/homebrew${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}
 ###  Start Simple Master and Adapter
 See [examples/mqtt_pair/README.md](examples/mqtt_pair/README.md) for more usage examples and details.
 
+## Releasing
+
+Merging to `main` does **not** create a release. Releases are tag-driven:
+
+1. On `main`, bump `version` in `pyproject.toml`.
+2. Push an annotated tag:
+
+```bash
+git tag -a v0.0.2 -m "Release v0.0.2"
+git push origin v0.0.2
+```
+
+That tag push publishes GHCR `:latest` / `:X.Y.Z`, builds wheels, and creates a GitHub Release with the wheel/sdist assets. Rolling `:main` images still publish on every push to `main`.
+
 ## Bindings
 This repo python packaging is based in scikit_build_example
 
